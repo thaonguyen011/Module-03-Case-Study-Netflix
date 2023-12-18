@@ -28,6 +28,7 @@ public class LoginManager {
         for (User user : userService.selectAll()) {
             loginAttemptsManagement.put(user.getId(), 0);
         }
+        System.out.println(loginAttemptsManagement.size());
         lockedUserManagement = new HashMap<>();
         codeValidateManagement = new HashMap<>();
         onlineUsers = new ArrayList<>();

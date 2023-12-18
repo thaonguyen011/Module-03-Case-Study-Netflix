@@ -9,10 +9,7 @@ import com.example.case_study.model.utils.regexValidator.EmailRegexValidator;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -61,16 +58,21 @@ public class MainController extends HttpServlet {
                         dispatcher = req.getRequestDispatcher("index.jsp");
                         dispatcher.forward(req, resp);
                     } else {
+                        Cookie[] cookies = req.getCookies();
+                        for (Cookie cookie : cookies) {
+                            if (cookie.getName().equals("lastStep")) {
 
+                            }
+                        }
                         session.setAttribute("emailSignIn", email);
                         // xet user da dang ki thanh cong chua
                         // thanh cong
-//                        resp.sendRedirect("/login");
-                        // khong thanh con
+                        resp.sendRedirect("/login");
+                        // khong thanh cong
                         //resp.sendRedirect("/signup/password");
 //                        dispatcher = req.getRequestDispatcher("signup/password.jsp");
 //                        dispatcher.forward(req, resp);
-                        resp.sendRedirect("signup/password.jsp");
+//                        resp.sendRedirect("signup/password.jsp");
                     }
                 } catch (NullPointerException ignored) {
 

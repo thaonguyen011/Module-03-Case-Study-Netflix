@@ -31,14 +31,14 @@
             <p style="color: red">User online in other application</p>
         </c:if>
         <label>
-            <input type="text" id="username" name="username" placeholder="username" oninput="getValue()" value="<%=username%>"  >
+            <input type="text" id="username" name="username"  placeholder="username" oninput="getValue()" value="<%=username%>"  >
         </label>
         <br> <br>
         <c:if test="${auth == 0}">
             <p style="color: red" id="not">Email not sign up</p>
         </c:if>
         <label>
-            <input type="password" name="password" placeholder="password">
+            <input type="password" name="password" id="password" placeholder="password" autocomplete="current-password">
         </label>
         <br> <br>
         <c:if test="${auth > 0 && auth < 6}" >
@@ -68,7 +68,32 @@
         document.getElementById("forgetPass1").href += username;
         document.getElementById("forgetPass2").href += username;
         document.getElementById("not").style.display = "none";
-
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOMContentLoaded");
+        if (document.getElementById("username").value === getCookie("username")) {
+            if (getCookie("rememberMe") === "true") {
+                console.log(getCookie("usernameCookie"));
+                console.log(getCookie("passwordCookie"));
+                document.getElementById("username").value = getCookie("username");
+                document.getElementById("password").value = getCookie("password");
+            }
+        }
+
+    });
+
+    function getCookie(name) {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.trim().split('=');
+            if (cookieName === name) {
+                return decodeURIComponent(cookieValue);
+            }
+        }
+        return null;
+    }
+
+
 </script>
 </html>

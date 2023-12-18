@@ -26,7 +26,8 @@
         </c:if>
     </label>
     <br>
-<input type="submit" value="Start">
+    <button type="submit"><p>Click me</p></button>
+<%--<input type="submit" value="Start">--%>
 </form>
 <script>
 

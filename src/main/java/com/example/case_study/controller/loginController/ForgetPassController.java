@@ -26,8 +26,6 @@ public class ForgetPassController extends HttpServlet {
             if (LoginManager.getInstance().isBlockedUser(username)) {
                 resp.sendRedirect("/login/block");
             } else {
-                LoginManager.getInstance().sendCodeEmail(username);
-
                 user = userService.getUserByUsername(username);
                 dispatcher =  req.getRequestDispatcher("formValidate.jsp");
                 dispatcher.forward(req, resp);
@@ -61,6 +59,7 @@ public class ForgetPassController extends HttpServlet {
     private void form(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         String form = req.getParameter("form");
         String email = req.getParameter("emailAddress");
+        LoginManager.getInstance().sendCodeEmail(email);
         RequestDispatcher dispatcher;
         if (form.equals("email")) {
             dispatcher = req.getRequestDispatcher("forgetPass.jsp");

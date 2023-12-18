@@ -41,6 +41,7 @@
       <td colspan="2">
         <label>
           <input type="submit" value="Change password">
+
         </label>
       </td>
     </tr>
