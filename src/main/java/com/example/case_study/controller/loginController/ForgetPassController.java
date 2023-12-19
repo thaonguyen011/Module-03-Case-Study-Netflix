@@ -15,23 +15,17 @@ import java.io.IOException;
 
 @WebServlet("/login/forgetPassword")
 public class ForgetPassController extends HttpServlet {
-    private User user;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        UserService userService = new UserService();
-        String username = req.getParameter("username");
-        RequestDispatcher dispatcher;
         HttpSession session = req.getSession();
-        if (userService.isExistUser(username)) {
-            if (LoginManager.getInstance().isBlockedUser(username)) {
-                resp.sendRedirect("/login/block");
-            } else {
-                user = userService.getUserByUsername(username);
-                dispatcher =  req.getRequestDispatcher("formValidate.jsp");
+        try {
+            if ((int) session.getAttribute("forgetPassStep") >= 2) {
+                RequestDispatcher dispatcher = req.getRequestDispatcher("forgetPass.jsp");
                 dispatcher.forward(req, resp);
+            } else {
+                resp.sendRedirect("/login");
             }
-        } else {
-            session.setAttribute("auth", 0);
+        } catch (NullPointerException e) {
             resp.sendRedirect("/login");
         }
 
@@ -39,40 +33,11 @@ public class ForgetPassController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("action");
-
-        if (action == null) action = "validate";
-
-        switch (action) {
-            case "form":
-                form(req, resp);
-                break;
-            case "validate":
-                validate(req, resp);
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    private void form(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
-        String form = req.getParameter("form");
-        String email = req.getParameter("emailAddress");
-        LoginManager.getInstance().sendCodeEmail(email);
-        RequestDispatcher dispatcher;
-        if (form.equals("email")) {
-            dispatcher = req.getRequestDispatcher("forgetPass.jsp");
-            dispatcher.forward(req, resp);
-        }
-    }
-
-    private void validate(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         String code = req.getParameter("code").trim();
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("forgetUser");
         boolean validateCode = LoginManager.getInstance().validateCode(user.getId(), code);
         if (validateCode) {
-            HttpSession session = req.getSession();
-            session.setAttribute("forgetUser", user);
             req.setAttribute("codeValidate", true);
             resp.sendRedirect("/login/changePass");
         } else {
@@ -80,6 +45,7 @@ public class ForgetPassController extends HttpServlet {
             req.setAttribute("codeValidate", false);
             dispatcher.forward(req, resp);
         }
+
     }
 
 }

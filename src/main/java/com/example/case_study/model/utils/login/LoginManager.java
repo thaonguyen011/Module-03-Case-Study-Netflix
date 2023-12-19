@@ -28,7 +28,6 @@ public class LoginManager {
         for (User user : userService.selectAll()) {
             loginAttemptsManagement.put(user.getId(), 0);
         }
-        System.out.println(loginAttemptsManagement.size());
         lockedUserManagement = new HashMap<>();
         codeValidateManagement = new HashMap<>();
         onlineUsers = new ArrayList<>();
@@ -53,6 +52,7 @@ public class LoginManager {
         } else if (isBlockedUser(loginRequest.getUsername())) {
             return 6;
         } else if (loginValidator.isCheck() && loginAttemptsManagement.get(user.getId())<= MAX_LOGIN_ATTEMPTS) {
+            loginAttemptsManagement.replace(user.getId(), 0);
             return -1;
         } else {
             if (loginAttemptsManagement.get(user.getId())<= MAX_LOGIN_ATTEMPTS) {
@@ -144,22 +144,20 @@ public class LoginManager {
 
         CodeGenerator randomCode = new CodeGenerator();
         String code = randomCode.generate();
-        int userId = 0;
 
-        for (User user : userService.selectAll()) {
-            if (email.equals(user.getEmail())) {
-                userId = user.getId();
-                break;
-            }
-        }
-        codeValidateManagement.put(userId, code);
+        User user = (new UserService()).getUserByUsername(email);
+        codeValidateManagement.put(user.getId(), code);
 
         try {
             javax.mail.Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(email));
             message.setSubject("Code validation email");
-            message.setText("This is a code validation email sent from netflix. Code is " + code);
+            Multipart multipart = getMultipart(code);
+
+            message.setContent(multipart);
+
+//            message.setText("This is a code validation email sent from netflix. Code is " + code);
             Transport.send(message);
 
             System.out.println("Code Email sent successfully.");
@@ -167,6 +165,24 @@ public class LoginManager {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Multipart getMultipart(String code) throws MessagingException {
+        String logoUrl = "https://1000logos.net/wp-content/uploads/2017/05/Netflix-Logo.png";
+
+        String htmlContent = "<html> <body style='font-family: Arial, sans-serif; padding: 20px;'>" +
+                "                   <div style='text-align: center;'>" +
+                "                    <img src='" + logoUrl + "' alt='Logo Netflix' style='width: 200px; height: auto;' />" +
+                "                    </div>" +
+                "<p>This is a code validation email sent from netflix. Code is " + code + "</p>" +
+                "</body></html>";
+
+
+        Multipart multipart = new MimeMultipart();
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        htmlPart.setContent(htmlContent, "text/html");
+        multipart.addBodyPart(htmlPart);
+        return multipart;
     }
 
     public boolean isBlockedUser(String username) {
@@ -208,5 +224,8 @@ public class LoginManager {
 
     public void setOnlineUsers(List<Integer> onlineUsers) {
         this.onlineUsers = onlineUsers;
+    }
+    public void addUser(User user) {
+        loginAttemptsManagement.put(user.getId(), 0);
     }
 }

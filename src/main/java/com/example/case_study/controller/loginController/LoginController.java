@@ -36,8 +36,12 @@ public class LoginController extends HttpServlet {
 
         int auth = loginManager.authentic(loginRequest);
         RequestDispatcher dispatcher;
+        session.setAttribute("email", username);
 
         if (auth == -1) {
+            User user = (new UserService()).getUserByUsername(username);
+            session.setAttribute("currentUser", user);
+            session.setAttribute("signInStep", "2");
             try {
                 String rememberMe = req.getParameter("rememberMe");
 
@@ -47,6 +51,9 @@ public class LoginController extends HttpServlet {
                     Cookie usernameCookie = new Cookie("username", username);
                     Cookie passwordCookie = new Cookie("password", password);
                     Cookie rememberMe1 = new Cookie("rememberMe", "true");
+
+
+                    System.out.println("current user " +user.getEmail());
 
                     // Đặt thời gian sống của cookie (ví dụ: 1 ngày)
                     usernameCookie.setMaxAge(365 * 24 * 60 * 60);
@@ -64,9 +71,8 @@ public class LoginController extends HttpServlet {
             }
             UserService userService = new UserService();
             User loginUser = userService.getUserByUsername(username);
-            LoginManager manager = LoginManager.getInstance();
-            if (!manager.isOnlineUser(loginUser.getId())) {
-                LoginManager.getInstance().addOnlineUser(loginUser.getId());
+            if (!loginManager.isOnlineUser(loginUser.getId())) {
+                loginManager.addOnlineUser(loginUser.getId());
                 resp.sendRedirect("/browse");
             } else {
                 dispatcher = req.getRequestDispatcher("login/login.jsp");
@@ -78,20 +84,10 @@ public class LoginController extends HttpServlet {
             req.setAttribute("auth", auth);
             dispatcher = req.getRequestDispatcher("login/login.jsp");
             dispatcher.forward(req, resp);
-            session.setAttribute("emailSignIn", username);
+            session.setAttribute("email", username);
         }
     }
 
-    private static String getHtmlResponse(String username, String password) {
-        String htmlResponse = "<html><head><script>";
-        htmlResponse += "document.addEventListener('DOMContentLoaded', function() {";
-        htmlResponse += "  localStorage.setItem('usernameLogin', '" + username + "');";
-        htmlResponse += "  localStorage.setItem('passwordLogin', '" + password + "');";
-        htmlResponse += "  localStorage.setItem('rememberMe', 'true');";
-        htmlResponse += "});";
-        htmlResponse += "</script></head><body>";
-        htmlResponse += "<h2>Data has been saved in localStorage.</h2>";
-        htmlResponse += "</body></html>";
-        return htmlResponse;
-    }
+
+
 }

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: apple
@@ -15,8 +16,11 @@
 <h1>Welcome back!</h1>
 <h1>Joining Netflix is easy</h1>
 <p>Enter your password and you'll be watching in no time</p>
-<p>Email</p>${emailSignIn}<p id="email">
+<p>Email</p>${email}<p id="email">
 </p>
+<c:if test="${wrongPassword == true}">
+  <p style="color: red">Wrong password</p>
+</c:if>
 <form action="${pageContext.request.contextPath}/signup/password" method="post">
   <label>
     <input type="password" name="password" placeholder="Enter your password">

@@ -6,18 +6,26 @@ import com.example.case_study.model.entity.User;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/signup/planform", "/signup/editPlan"})
 public class PlanFormController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("planform.jsp");
-        dispatcher.forward(req, resp);
+        HttpSession session = req.getSession();
+        RequestDispatcher dispatcher;
+        try {
+            if (Integer.parseInt((String) session.getAttribute("signUpStep")) < 4) {
+                resp.sendRedirect("/signup");
+            } else {
+                dispatcher = req.getRequestDispatcher("planform.jsp");
+                dispatcher.forward(req, resp);
+            }
+        }  catch (NumberFormatException e) {
+            resp.sendRedirect("/main");
+        }
+
     }
 
     @Override
@@ -30,6 +38,14 @@ public class PlanFormController extends HttpServlet {
         subscription.setName(plan);
         subscription.setUserId(user.getId());
 
-        resp.sendRedirect("/signup/paymentPicker");
+
+        int signUpStep = Integer.parseInt((String) session.getAttribute("signUpStep"));
+        if (signUpStep == 4) {
+            session.setAttribute("signUpStep", "5");
+            resp.sendRedirect("/signup/paymentPicker");
+        } else {
+            resp.sendRedirect("/signup/mobileWalletOption");
+        }
+
     }
 }

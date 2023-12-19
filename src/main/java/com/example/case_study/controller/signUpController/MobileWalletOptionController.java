@@ -17,17 +17,29 @@ public class MobileWalletOptionController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("mobileWalletOption.jsp");
-        dispatcher.forward(req, resp);
+        HttpSession session = req.getSession();
+        RequestDispatcher dispatcher;
+        try {
+            if (Integer.parseInt((String) session.getAttribute("signUpStep")) < 6) {
+                resp.sendRedirect("/signup/paymentPicker");
+            } else {
+                dispatcher = req.getRequestDispatcher("mobileWalletOption.jsp");
+                dispatcher.forward(req, resp);
+            }
+        }   catch (NumberFormatException e) {
+            resp.sendRedirect("/main");
+        }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String phone = req.getParameter("phone");
         HttpSession session = req.getSession();
+        session.setAttribute("phoneNumber", phone);
         User newUser = (User) session.getAttribute("newUser");
         newUser.setPhone(phone);
-
+        session.setAttribute("signUpStep", "7");
        UserService userService = new UserService();
        userService.update(newUser);
 

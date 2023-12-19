@@ -14,7 +14,7 @@
 
 <body>
 <h1>Change password</h1>
-<form action="${pageContext.request.contextPath}/login/changePass" method="post">
+<form id="myForm" action="${pageContext.request.contextPath}/login/changePass" method="post">
   <table>
     <tr>
       <td>Enter new password: </td>
@@ -22,7 +22,7 @@
         <label>
           <input type="password" name="newPass" id="newPass" oninput="change();check()">
         </label>
-        <p style="color: red; display: none" id="size1" >Between 5 and 60 characters</p>
+        <p style="color: red; display: none" id="size1" >Between 6 and 60 characters</p>
       </td>
     </tr>
     <tr>
@@ -57,7 +57,7 @@
 
   function check1() {
     let pass = document.getElementById("newPass").value;
-    if (pass.length > 0 && (pass.length < 5 || pass.length > 60)) {
+    if (pass.length > 0 && (pass.length < 6 || pass.length > 60)) {
       document.getElementById("size1").style.display = "block";
       return false;
     }
@@ -66,7 +66,7 @@
 
   function check2() {
     let pass = document.getElementById("newPassAgain").value;
-    if (pass.length > 0 && (pass.length < 5 || pass.length > 60)) {
+    if (pass.length > 0 && (pass.length < 6 || pass.length > 60)) {
       document.getElementById("size2").style.display = "block";
       return false;
     } else {
@@ -87,5 +87,19 @@
     setTimeout(check2, 2000);
     setTimeout(check3, 1000);
   }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    check();
+    let pass = document.getElementById("newPass").value;
+    let pass1 = document.getElementById("newPassAgain").value;
+    if (pass.length >= 6 && pass.length <= 60 && pass === pass1) {
+      event.target.submit();
+    }
+  }
+
+  let myForm = document.getElementById("myForm");
+
+  myForm.addEventListener("submit", handleSubmit);
 </script>
 </html>

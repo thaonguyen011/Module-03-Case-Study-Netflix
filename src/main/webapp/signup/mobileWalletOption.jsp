@@ -11,10 +11,16 @@
     <title>Netflix</title>
 </head>
 <body>
+<%
+  String phoneNumber = (String) session.getAttribute("phone");
+  if (phoneNumber == null) {
+    phoneNumber="";
+  }
+%>
 <h1>Mobile Wallet Option</h1>
 <form action="/signup/mobileWalletOption" method="post">
   <label>
-    <input type="text" name="phone" placeholder="Mobile number" required>
+    <input type="text" name="phone" id="phone" placeholder="Mobile number"  onchange="save()" >
   </label>
   <p>Plan: ${plan}<a href="/signup/editPlan"> Change</a></p>
   <label>
@@ -23,5 +29,17 @@
   <input type="submit" value="Submit">
 </form>
 
+<script>
+  function save() {
+    localStorage.setItem("phone", document.getElementById("phone").value);
+    console.log("save");
+    console.log(localStorage.getItem("phone"));
+  }
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("phone").value = localStorage.getItem("phone");
+  })
+</script>
 </body>
 </html>

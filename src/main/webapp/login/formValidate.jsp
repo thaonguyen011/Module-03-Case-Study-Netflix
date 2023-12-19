@@ -11,9 +11,15 @@
     <title>Forget Password</title>
 </head>
 <body>
+<%
+    String email = request.getParameter("username");
+    if (email == null) {
+        email = "";
+    }
+%>
 <h1>Forgot Email/Password</h1>
 <a href="${pageContext.request.contextPath}/login">Sign in</a>
-<form action="/login/forgetPassword?action=form" method="post">
+<form action="${pageContext.request.contextPath}/login/formValidate" method="post">
     <p>How would you like to reset your password</p>
     <label>
         <input type="radio" name="form" value="email">Email
@@ -23,7 +29,7 @@
     </label>
     <p>We will email you with instructions on how to reset password.</p>
     <label>
-        <input type="email" size="100" name="emailAddress" placeholder="name@example.com"><br><br>
+        <input type="email" size="100" name="emailAddress" placeholder="name@example.com" value="<%=email%>"><br><br>
     </label>
     <input type="submit" value="Email Me">
 </form>

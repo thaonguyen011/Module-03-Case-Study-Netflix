@@ -14,7 +14,7 @@
 </head>
 <%
     session = request.getSession();
-    String username = (String) session.getAttribute("emailSignIn");
+    String username = (String) session.getAttribute("email");
     if (username == null) {
         username = (String) request.getAttribute("emailSignIn");
         if (username == null) {
@@ -31,7 +31,7 @@
             <p style="color: red">User online in other application</p>
         </c:if>
         <label>
-            <input type="text" id="username" name="username"  placeholder="username" oninput="getValue()" value="<%=username%>"  >
+            <input type="text" id="username" name="username"  placeholder="username" onchange="getValue()" value="<%=username%>"  >
         </label>
         <br> <br>
         <c:if test="${auth == 0}">
@@ -55,8 +55,8 @@
             <input type="submit" value="Login">
         </label>
     </form>
-    <a href="${pageContext.request.contextPath}/login/forgetPassword?username=<%=username%>" id="forgetPass1">Forget password </a> <br><br>
-    <a href="${pageContext.request.contextPath}/login/forgetPassword?username=<%=username%>" id="forgetPass2">Need help </a>
+    <a href="${pageContext.request.contextPath}/login/formValidate?username=<%=username%>" id="forgetPass1">Forget password </a> <br><br>
+    <a href="${pageContext.request.contextPath}/login/formValidate?username=<%=username%>" id="forgetPass2">Need help </a>
     <br><br>
     <p>New to Netflix? <a href="${pageContext.request.contextPath}/main">Sign up now.</a> </p>
 
@@ -65,6 +65,7 @@
 <script>
     function getValue() {
         const username = document.getElementById("username").value;
+
         document.getElementById("forgetPass1").href += username;
         document.getElementById("forgetPass2").href += username;
         document.getElementById("not").style.display = "none";
@@ -72,15 +73,27 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         console.log("DOMContentLoaded");
-        if (document.getElementById("username").value === getCookie("username")) {
+        let fieldChange = false;
+
+        function change() {
+            fieldChange = true;
+        }
+
+        let auth = "<%= request.getAttribute("auth")%>";
+        if (auth > 0 && auth < 6) {
+            fieldChange = true;
+        }
+
+        if (!fieldChange && document.getElementById("username").value === getCookie("username")) {
             if (getCookie("rememberMe") === "true") {
-                console.log(getCookie("usernameCookie"));
-                console.log(getCookie("passwordCookie"));
                 document.getElementById("username").value = getCookie("username");
                 document.getElementById("password").value = getCookie("password");
             }
         }
 
+        if (auth === -1) {
+
+        }
     });
 
     function getCookie(name) {

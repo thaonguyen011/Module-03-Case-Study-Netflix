@@ -1,3 +1,6 @@
+<%@ page import="com.example.case_study.model.entity.User" %>
+<%@ page import="com.example.case_study.model.service.impl.UserService" %>
+<%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
@@ -5,14 +8,12 @@
 <head>
     <title>Netflix</title>
 </head>
+
 <body>
 <h1>Welcome to movie web
 </h1>
 <br/>
 <a href="${pageContext.request.contextPath}/login">Login</a>
-<br>
-<br>
-<a href="${pageContext.request.contextPath}/signup/regform">Sign up</a>
 <br>
 <br>
 <form action="${pageContext.request.contextPath}/main" method="post">
@@ -25,7 +26,7 @@
             <p style="color:red" id="change1">User is online in other application</p>
         </c:if>
     </label>
-    <br>
+    <br><br>
     <button type="submit"><p>Click me</p></button>
 <%--<input type="submit" value="Start">--%>
 </form>

@@ -68,7 +68,7 @@ public class UserDAO implements IUserDAO {
                 String password = rs.getString("password");
                 String phone = rs.getString("phone");
                 String email = rs.getString("email");
-                user = new User(username, password, phone, email);
+                user = new User(id, username, password, phone, email);
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -25,11 +25,15 @@ public class PasswordController extends HttpServlet {
         String password = req.getParameter("password");
         HttpSession session = req.getSession();
         UserService userService = new UserService();
-        String email = (String) session.getAttribute("emailSignIn");
+        String email = (String) session.getAttribute("email");
         User userLogin = userService.getUserByUsername(email);
         session.setAttribute("newUser", userLogin);
         if (userLogin.getPassword().equals(password)) {
             resp.sendRedirect("/signup");
+        } else {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("password.jsp");
+            req.setAttribute("wrongPassword", true);
+            dispatcher.forward(req, resp);
         }
 
     }

@@ -18,8 +18,18 @@ import java.io.IOException;
 public class ChangePassController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-       RequestDispatcher dispatcher = req.getRequestDispatcher("changePassword.jsp");
-       dispatcher.forward(req,resp);
+        HttpSession session = req.getSession();
+        try {
+            if ((int) session.getAttribute("forgetPassStep") >= 2) {
+                RequestDispatcher dispatcher = req.getRequestDispatcher("changePassword.jsp");
+                dispatcher.forward(req,resp);
+            } else {
+                resp.sendRedirect("/login");
+            }
+        } catch (NullPointerException e) {
+            resp.sendRedirect("/login");
+        }
+
     }
 
     @Override

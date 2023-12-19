@@ -17,9 +17,9 @@
 <h1>Create a password to start your membership</h1>
 <p>Just a few more steps and you're done!</p>
 <p>We hate paperwork, too.</p>
-<form action="${pageContext.request.contextPath}/signup/regform" method="post">
+<form id="myForm" action="${pageContext.request.contextPath}/signup/regform" method="post">
     <label>
-        <input type="text" name="email" placeholder="Enter email" value="${emailSignUp}">
+        <input type="text" name="email" placeholder="Enter email" value="${email}">
     </label><br><br>
     <c:if test="${existEmail == true}">
         <p style="color: red">Email exist</p>
@@ -30,20 +30,19 @@
     <label>
         <input type="password" name="password" id="password" placeholder="Enter password" oninput="check();change()">
     </label>
-    <p id="check"></p>
+    <p id="check" style="color: red; display: none">Enter pass between 6 and 60 characters</p>
     <label>
         <input type="checkbox" name="notSendOffers" value="true"> Please do not email me Netflix special offers.
     </label><br><br>
     <input type="submit" value="Next">
 </form>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+<script>
     function check1() {
         let pass = document.getElementById("password").value;
 
         if (pass.length > 0 && (pass.length < 6 || pass.length > 60)) {
             document.getElementById("check").style.display = "block";
-            document.getElementById("check").innerHTML = "Enter pass between 6 and 60 characters"
         }
     }
 
@@ -54,6 +53,19 @@
     function change() {
         document.getElementById("check").style.display = "none";
     }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        check();
+        let pass = document.getElementById("password").value;
+        if (pass.length >= 6 && pass.length <= 60) {
+            event.target.submit();
+        }
+    }
+
+    let myForm = document.getElementById("myForm");
+
+    myForm.addEventListener("submit", handleSubmit);
 
 
 </script>
